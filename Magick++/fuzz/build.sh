@@ -15,6 +15,13 @@ make -j$(nproc)
 make install
 popd
 
+# build jbigkit
+pushd "$SRC/jbigkit-2.1"
+make -j$(nproc) CFLAGS="$CFLAGS -fPIC" CC="$CC"
+cp libjbig/*.h "$WORK/include/"
+cp libjbig/*.a "$WORK/lib/"
+popd
+
 # Build png
 pushd "$SRC/libpng"
 cmake . -DCMAKE_INSTALL_PREFIX=$WORK -DPNG_SHARED=off
@@ -80,7 +87,7 @@ popd
 # Build webp
 pushd "$SRC/libwebp"
 ./autogen.sh
-./configure --disable-shared --prefix="$WORK"
+./configure --disable-shared --enable-libwebpmux --prefix="$WORK"
 make -j$(nproc)
 make install
 popd
@@ -102,7 +109,7 @@ MAGICK_COMPILER=$CXX
 MAGICK_COMPILER_FLAGS=$CXXFLAGS
 MAGICK_INCLUDE="$WORK/include/ImageMagick-7"
 MAGICK_SRC="$SRC/imagemagick/Magick++/fuzz"
-MAGICK_LIBS_NO_FUZZ="$WORK/lib/libMagick++-7.Q16HDRI.a $WORK/lib/libMagickWand-7.Q16HDRI.a $WORK/lib/libMagickCore-7.Q16HDRI.a $WORK/lib/libpng.a $WORK/lib/libtiff.a $WORK/lib/libheif.a $WORK/lib/libde265.a $WORK/lib/libopenjp2.a $WORK/lib/libwebp.a $WORK/lib/libturbojpeg.a $WORK/lib/libjpeg.a $WORK/lib/libfreetype.a $WORK/lib/libraw.a $WORK/lib/liblzma.a $WORK/lib/liblcms2.a $WORK/lib/libz.a"
+MAGICK_LIBS_NO_FUZZ="$WORK/lib/libMagick++-7.Q16HDRI.a $WORK/lib/libMagickWand-7.Q16HDRI.a $WORK/lib/libMagickCore-7.Q16HDRI.a $WORK/lib/libpng.a $WORK/lib/libtiff.a $WORK/lib/libheif.a $WORK/lib/libde265.a $WORK/lib/libopenjp2.a $WORK/lib/libwebp.a $WORK/lib/libturbojpeg.a $WORK/lib/libjpeg.a $WORK/lib/libfreetype.a $WORK/lib/libraw.a $WORK/lib/liblzma.a $WORK/lib/liblcms2.a $WORK/lib/libz.a $WORK/lib/libjbig.a $WORK/lib/libjbig85.a"
 MAGICK_LIBS="$LIB_FUZZING_ENGINE $MAGICK_LIBS_NO_FUZZ"
 MAGICK_OUTPUT=$OUT
 MAGICK_FAST_BUILD=0
